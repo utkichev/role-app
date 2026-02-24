@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Заявка на роль</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Приятный фиолетовый/лавандовый дизайн */
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #f4f0fa);
+            --text-color: var(--tg-theme-text-color, #333);
+            --primary-color: #8874a3; /* Пыльно-фиолетовый */
+            --primary-hover: #725d8f;
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #eadef0);
+            --button-text: var(--tg-theme-button-text-color, #fff);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Скрываем все экраны по умолчанию, кроме активного */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .rules-box {
+            background-color: var(--secondary-bg);
+            padding: 15px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: 16px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: var(--button-text);
+            border: none;
+            border-radius: 16px; /* Закругленно-квадратные */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        button:active {
+            background-color: var(--primary-hover);
+        }
+
+        /* Сетка для категорий (2 колонки) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .category-card {
+            background-color: var(--primary-color);
+            color: var(--button-text);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            transition: transform 0.1s;
+        }
+        .category-card:active {
+            transform: scale(0.95);
+        }
+
+        /* Место под картинку в будущем */
+        .image-placeholder {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            /* Сюда потом добавим background-image: url('ссылка'); */
+        }
+
+        /* Список персонажей */
+        .char-item {
+            background-color: var(--secondary-bg);
+            padding: 15px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+        }
+        .char-item:active {
+            background-color: var(--primary-color);
+            color: var(--button-text);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="screen-welcome" class="screen active">
+        <h1>Добро пожаловать!</h1>
+        <p style="text-align: center;">Здесь вы можете подать заявку на вступление в наш флуд.</p>
+        <button onclick="showScreen('screen-rules')">Создать заявку</button>
+    </div>
+
+    <div id="screen-rules" class="screen">
+        <h2>Правила флуда</h2>
+        <div class="rules-box">
+            <p><b>Обязательно к прочтению:</b></p>
+            <ul>
+                <li>Калл могут вызывать только владельцы // пред</li>
+                <li>Менять роль слишком часто нельзя (раз в 2 недели)</li>
+                <li>Норму нужно соблюдать, если вы не наберете норму и не сможете оправдать себя, вылет</li>
+                <li>Ссориться запрещено // пред, мут или бан</li>
+                <li>Оскорбления запрещены // мут или варн. В эту группу входят не только оскорбления на одно лицо, но и на определенные группы</li>
+                <li>Обсуждение политики в негативном или оскорбительном смысле // словесное предупреждение, мут, варн или бан</li>
+                <li>Нельзя скидывать фотки шокирующего содержания и +18 // бан</li>
+                <li>Спам (сообщением, фоткой, стикерам) ЗАПРЕЩЕН // бан или мут</li>
+                <li>Злоупотребление "@юз" (особенно в сторону админов или владельцев) // словесное предупреждение -> пред</li>
+                <li>Пиар других ролевых/флудов запрещен // пред (Если цель только реклама // бан)</li>
+                <li>Желательно быть подписанными на инфо тгк</li>
+                <li>Если вы зашли в флуд более 4 дней назад, нужно набрать норму</li>
+                <li>Если вы не набрали норму, у вас есть ровно 24 часа с момента окончания чистки для объяснения причины</li>
+                <li>Желательно предупреждать о ресте хотя бы за 1-2 дня перед чисткой</li>
+                <li>Если вы вышли из реста, то в течение 4 дней норму у вас проверять не будут</li>
+            </ul>
+            <p><b>Важное:</b> Всего максимум 4 варна, но на третий варн прибавляется сразу два к счетчику. Жалобы подаются через бота с пометкой "Жалоба" (максимум через 47 часов после нарушения).</p>
+            <p>Когда выходите, желательно говорите роль и причину!<br><br><a href="https://telegra.ph/Pravila-polnaya-versiya-300126-01-29" target="_blank">Полные правила тут</a></p>
+        </div>
+        <button onclick="showScreen('screen-username')">Я прочитал и согласен</button>
+    </div>
+
+    <div id="screen-username" class="screen">
+        <h2>Ваш Telegram</h2>
+        <p style="text-align: center;">Введите ваш @username для связи с вами.</p>
+        <input type="text" id="username-input" placeholder="@username" />
+        <button onclick="saveUsername()">Далее</button>
+    </div>
+
+    <div id="screen-category" class="screen">
+        <h2>Выберите класс</h2>
+        <div class="grid-container" id="category-grid">
+            </div>
+        <button onclick="showScreen('screen-username')" style="margin-top: 20px; background-color: #ccc; color: #333;">Назад</button>
+    </div>
+
+    <div id="screen-character" class="screen">
+        <h2 id="selected-category-title">Персонажи</h2>
+        <div id="character-list">
+            </div>
+        <button onclick="showScreen('screen-category')" style="margin-top: 20px; background-color: #ccc; color: #333;">Назад к классам</button>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Открываем приложение на весь экран
+
+        let userApp = {
+            username: "",
+            category: "",
+            character: ""
+        };
+
+        // Данные ролей (мы их перенесли из Python в JS для приложения)
+        const rolesData = {
+            "WITCH": ["Dark Enchantress Cookie"],
+            "BEAST": ["Burning Spice Cookie", "Eternal Sugar Cookie", "Silent Salt Cookie", "Mystic Flour Cookie", "Shadow milk Cookie"],
+            "ANCIENT": ["White Lily Cookie", "Golden Cheese Cookie", "Dark Cacao Cookie", "Hollyberry Cookie", "Pure Vanilla Cookie"],
+            "SPECIAL": ["Snapdragon Cookie", "Cream Ferret Cookie", "Icicle Yeti Cookie", "Marshmallow Bunny Cookie"],
+            "DRAGON": ["Pitaya Dragon Cookie"],
+            "LEGENDARY": ["Wind Archer Cookie", "Millennial Tree Cookie", "Stormbringer Cookie", "Moonlight Cookie", "Black Pearl Cookie", "Fire Spirit Cookie", "Sea Fairy Cookie", "Frost Queen Cookie"],
+            "SUPER EPIC": ["Doughhael Cookie", "Camellia Cookie", "Elder Faerie Cookie", "Crimson Coral Cookie", "Shining Glitter Cookie", "Capsaicin Cookie", "Clotted Cream Cookie", "Oyster Cookie", "Sherbet Cookie", "Stardust Cookie", "Venom Dough Cookie"],
+            "EPIC": ["Nutmeg Tiger Cookie", "Smoked Cheese Cookie", "Golden Osmanthus Cookie", "Choco Drizzle Cookie", "Pudding à la Mode Cookie", "Green Tea Mousse Cookie", "Okchun Cookie", "Candy Apple Cookie", "Black Sapphire Cookie", "Red Osmanthus Cookie", "Street Urchin Cookie", "Cloud Haetae Cookie", "Peach Blossom Cookie", "Star Coral Cookie", "Caramel Choux Cookie", "Burnt Cheese Cookie", "Fettuccine Cookie", "Mozzarella Cookie", "Olive Cookie", "Linzer Cookie", "Crème Brûlée Cookie", "Rebel Cookie", "Silverbell Cookie", "Mercurial Knight Cookie", "Matcha Cookie", "Butter Roll Cookie", "Prophet Cookie", "Milky Way Cookie", "Blueberry Pie Cookie", "Space Doughnut", "Prune Juice Cookie", "Kouign-Amann Cookie", "Royal Margarine Cookie", "Tarte Tatin Cookie", "Rockstar Cookie", "Black Lemonade Cookie", "Peppermint Cookie", "Frilled Jellyfish Cookie", "Cocoa Cookie", "Eclair Cookie", "Tea Knight Cookie", "Affogato Cookie", "Caramel Arrow Cookie", "Cherry Blossom Cookie", "Wildberry Cookie", "Crunchy Chip Cookie", "Financier Cookie", "Cream Unicorn Cookie", "Captain Caviar Cookie", "Candy Diver Cookie", "Schwarzwälder", "Macaron Cookie", "Carol Cookie", "Pinecone Cookie", "Black Raisin Cookie", "Strawberry Crepe Cookie", "Fig Cookie", "Pastry Cookie", "Red Velvet Cookie", "Mango Cookie", "Lilac Cookie", "Parfait Cookie", "Raspberry Cookie", "Moon Rabbit Cookie", "Mala Sauce Cookie", "Twizzly Gummy Cookie", "Pumpkin Pie Cookie", "Cotton Cookie", "Licorice Cookie", "Madeleine Cookie", "Espresso Cookie", "Rye Cookie", "Kumiho Cookie", "Latte Cookie", "Cream Puff Cookie", "Almond Cookie", "Werewolf Cookie", "Mint Choco Cookie", "Herb Cookie", "Dark Choco Cookie", "Sparkling Cookie", "Chili Pepper Cookie", "Pomegranate Cookie", "Purple Yam Cookie", "Milk Cookie", "Poison Mushroom Cookie", "Snow Sugar Cookie", "Vampire Cookie", "Tiger Lily Cookie", "Sorbet Shark Cookie", "Black Forest Cookie", "Squid Ink Cookie", "Agar Agar Cookie", "Wedding Cake Cookie", "Pavlova Cookie", "Sugarfly Cookie", "Cream Soda Cookie", "Lemon Cookie", "Orange Cookie", "Jagae Cookie", "Manju Cookie", "Lime Cookie", "Grapefruit Cookie", "Seltzer Cookie", "Menthol Cookie", "Charcoal Cookie", "Salt Cellar Cookie", "Chess Choco Cookie", "Mold Dough Cookie", "Pom Pom Dough"],
+            "RARE": ["Princess Cookie", "Knight Cookie", "Cherry Cookie", "Alchemist Cookie", "Adventurer Cookie", "Blackberry Cookie", "Gumball Cookie", "Onion Cookie", "Pancake Cookie", "Avocado Cookie", "Carrot Cookie", "Clover Cookie", "Custard Cookie III", "Devil Cookie"],
+            "COMMON": ["Beet Cookie", "Wizard Cookie", "Muscle Cookie", "Angel Cookie", "Ninja Cookie", "Strawberry Cookie", "GingerBrave"],
+            "ДРУГОЕ": ["Своя роль..."]
+        };
+
+        // Попытка автозаполнения юзернейма из данных Телеграма
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
+            document.getElementById("username-input").value = "@" + tg.initDataUnsafe.user.username;
+        }
+
+        // Функция переключения экранов
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Сохранение юзернейма
+        function saveUsername() {
+            let input = document.getElementById("username-input").value.trim();
+            if (!input) {
+                alert("Пожалуйста, введите ваш @username!");
+                return;
+            }
+            userApp.username = input;
+            buildCategories();
+            showScreen('screen-category');
+        }
+
+        // Построение сетки категорий
+        function buildCategories() {
+            const grid = document.getElementById("category-grid");
+            grid.innerHTML = ""; // Очищаем
+
+            for (let cat in rolesData) {
+                let card = document.createElement("div");
+                card.className = "category-card";
+                card.onclick = () => selectCategory(cat);
+                
+                // Здесь мы позже сможем вставить нужные картинки!
+                card.innerHTML = `
+                    <div class="image-placeholder"></div>
+                    <div>${cat}</div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        // Выбор категории и показ персонажей
+        function selectCategory(cat) {
+            userApp.category = cat;
+            document.getElementById("selected-category-title").innerText = cat;
+            const list = document.getElementById("character-list");
+            list.innerHTML = "";
+
+            rolesData[cat].forEach(char => {
+                let item = document.createElement("div");
+                item.className = "char-item";
+                item.innerText = char;
+                item.onclick = () => submitApplication(char);
+                list.appendChild(item);
+            });
+
+            showScreen('screen-character');
+        }
+
+        // Финальная отправка
+        function submitApplication(character) {
+            userApp.character = character;
+            
+            // Если выбрали "Своя роль...", можно было бы открыть еще один экран с вводом текста,
+            // но пока просто отправляем. Для интеграции мы используем sendData.
+
+            let finalData = JSON.stringify({
+                action: "new_app",
+                username: userApp.username,
+                category: userApp.category,
+                role: userApp.character
+            });
+
+            // Отправляем данные обратно в бота!
+            tg.sendData(finalData);
+            tg.close(); // Закрываем веб-апп
+        }
+    </script>
+</body>
+</html>
