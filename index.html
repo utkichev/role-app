@@ -6,138 +6,50 @@
     <title>Заявка на роль</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Приятный фиолетовый/лавандовый дизайн */
         :root {
             --bg-color: var(--tg-theme-bg-color, #f4f0fa);
             --text-color: var(--tg-theme-text-color, #333);
-            --primary-color: #8874a3; /* Пыльно-фиолетовый */
+            --primary-color: #8874a3;
             --primary-hover: #725d8f;
             --secondary-bg: var(--tg-theme-secondary-bg-color, #eadef0);
             --button-text: var(--tg-theme-button-text-color, #fff);
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
+            background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; overflow-x: hidden;
         }
-
-        /* Скрываем все экраны по умолчанию, кроме активного */
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1, h2 {
-            text-align: center;
-            color: var(--primary-color);
-        }
-
+        .screen { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h1, h2 { text-align: center; color: var(--primary-color); }
         .rules-box {
-            background-color: var(--secondary-bg);
-            padding: 15px;
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.5;
-            max-height: 60vh;
-            overflow-y: auto;
-            margin-bottom: 20px;
+            background-color: var(--secondary-bg); padding: 15px; border-radius: 16px;
+            font-size: 14px; line-height: 1.5; max-height: 60vh; overflow-y: auto; margin-bottom: 20px;
         }
-
         input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--primary-color);
-            border-radius: 16px;
-            font-size: 16px;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            outline: none;
+            width: 100%; padding: 15px; border: 2px solid var(--primary-color); border-radius: 16px;
+            font-size: 16px; box-sizing: border-box; margin-bottom: 20px;
+            background-color: var(--bg-color); color: var(--text-color); outline: none;
         }
-
         button {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--primary-color);
-            color: var(--button-text);
-            border: none;
-            border-radius: 16px; /* Закругленно-квадратные */
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: background 0.2s;
+            width: 100%; padding: 15px; background-color: var(--primary-color); color: var(--button-text);
+            border: none; border-radius: 16px; font-size: 16px; font-weight: bold;
+            cursor: pointer; margin-bottom: 10px; transition: background 0.2s;
         }
-        button:active {
-            background-color: var(--primary-hover);
-        }
-
-        /* Сетка для категорий (2 колонки) */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
+        button:active { background-color: var(--primary-hover); }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .category-card {
-            background-color: var(--primary-color);
-            color: var(--button-text);
-            border-radius: 16px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
-            transition: transform 0.1s;
+            background-color: var(--primary-color); color: var(--button-text); border-radius: 16px;
+            padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 100px; transition: transform 0.1s;
         }
-        .category-card:active {
-            transform: scale(0.95);
-        }
-
-        /* Место под картинку в будущем */
-        .image-placeholder {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            /* Сюда потом добавим background-image: url('ссылка'); */
-        }
-
-        /* Список персонажей */
-        .char-item {
-            background-color: var(--secondary-bg);
-            padding: 15px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 500;
-        }
-        .char-item:active {
-            background-color: var(--primary-color);
-            color: var(--button-text);
-        }
+        .category-card:active { transform: scale(0.95); }
+        .image-placeholder { width: 60px; height: 60px; background-color: rgba(255, 255, 255, 0.2); border-radius: 12px; margin-bottom: 10px; }
+        .char-item { background-color: var(--secondary-bg); padding: 15px; border-radius: 16px; margin-bottom: 10px; cursor: pointer; text-align: center; font-weight: 500; }
+        .char-item:active { background-color: var(--primary-color); color: var(--button-text); }
     </style>
 </head>
 <body>
-
     <div id="screen-welcome" class="screen active">
         <h1>Добро пожаловать!</h1>
         <p style="text-align: center;">Здесь вы можете подать заявку на вступление в наш флуд.</p>
@@ -149,6 +61,7 @@
         <div class="rules-box">
             <p><b>Обязательно к прочтению:</b></p>
             <ul>
+                <br><br><a href="https://t.me/pussuflood2">Канал Флуда</a></p>
                 <li>Калл могут вызывать только владельцы // пред</li>
                 <li>Менять роль слишком часто нельзя (раз в 2 недели)</li>
                 <li>Норму нужно соблюдать, если вы не наберете норму и не сможете оправдать себя, вылет</li>
@@ -164,7 +77,7 @@
                 <li>Если вы не набрали норму, у вас есть ровно 24 часа с момента окончания чистки для объяснения причины</li>
                 <li>Желательно предупреждать о ресте хотя бы за 1-2 дня перед чисткой</li>
                 <li>Если вы вышли из реста, то в течение 4 дней норму у вас проверять не будут</li>
-            </ul>
+           </ul>
             <p><b>Важное:</b> Всего максимум 4 варна, но на третий варн прибавляется сразу два к счетчику. Жалобы подаются через бота с пометкой "Жалоба" (максимум через 47 часов после нарушения).</p>
             <p>Когда выходите, желательно говорите роль и причину!<br><br><a href="https://telegra.ph/Pravila-polnaya-versiya-300126-01-29" target="_blank">Полные правила тут</a></p>
         </div>
@@ -180,30 +93,30 @@
 
     <div id="screen-category" class="screen">
         <h2>Выберите класс</h2>
-        <div class="grid-container" id="category-grid">
-            </div>
+        <div class="grid-container" id="category-grid"></div>
         <button onclick="showScreen('screen-username')" style="margin-top: 20px; background-color: #ccc; color: #333;">Назад</button>
     </div>
 
     <div id="screen-character" class="screen">
         <h2 id="selected-category-title">Персонажи</h2>
-        <div id="character-list">
-            </div>
+        <div id="character-list"></div>
         <button onclick="showScreen('screen-category')" style="margin-top: 20px; background-color: #ccc; color: #333;">Назад к классам</button>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Открываем приложение на весь экран
+        tg.expand(); 
 
-        let userApp = {
-            username: "",
-            category: "",
-            character: ""
-        };
+        // Читаем занятые роли из умной ссылки, которую прислал бот
+        const urlParams = new URLSearchParams(window.location.search);
+        const takenParam = urlParams.get('taken');
+        let takenRoles = [];
+        if(takenParam) {
+            takenRoles = takenParam.split(',');
+        }
 
-        // Данные ролей (мы их перенесли из Python в JS для приложения)
+        let userApp = { username: "", category: "", character: "" };
+
         const rolesData = {
             "WITCH": ["Dark Enchantress Cookie"],
             "BEAST": ["Burning Spice Cookie", "Eternal Sugar Cookie", "Silent Salt Cookie", "Mystic Flour Cookie", "Shadow milk Cookie"],
@@ -218,83 +131,65 @@
             "ДРУГОЕ": ["Своя роль..."]
         };
 
-        // Попытка автозаполнения юзернейма из данных Телеграма
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
             document.getElementById("username-input").value = "@" + tg.initDataUnsafe.user.username;
         }
 
-        // Функция переключения экранов
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        // Сохранение юзернейма
         function saveUsername() {
             let input = document.getElementById("username-input").value.trim();
-            if (!input) {
-                alert("Пожалуйста, введите ваш @username!");
-                return;
-            }
+            if (!input) { alert("Пожалуйста, введите ваш @username!"); return; }
             userApp.username = input;
             buildCategories();
             showScreen('screen-category');
         }
 
-        // Построение сетки категорий
         function buildCategories() {
             const grid = document.getElementById("category-grid");
-            grid.innerHTML = ""; // Очищаем
-
+            grid.innerHTML = ""; 
             for (let cat in rolesData) {
                 let card = document.createElement("div");
                 card.className = "category-card";
                 card.onclick = () => selectCategory(cat);
-                
-                // Здесь мы позже сможем вставить нужные картинки!
-                card.innerHTML = `
-                    <div class="image-placeholder"></div>
-                    <div>${cat}</div>
-                `;
+                card.innerHTML = `<div class="image-placeholder"></div><div>${cat}</div>`;
                 grid.appendChild(card);
             }
         }
 
-        // Выбор категории и показ персонажей
         function selectCategory(cat) {
             userApp.category = cat;
             document.getElementById("selected-category-title").innerText = cat;
             const list = document.getElementById("character-list");
             list.innerHTML = "";
 
+            let count = 0;
             rolesData[cat].forEach(char => {
-                let item = document.createElement("div");
-                item.className = "char-item";
-                item.innerText = char;
-                item.onclick = () => submitApplication(char);
-                list.appendChild(item);
+                // Если персонаж уже занят - не показываем его!
+                if (!takenRoles.includes(char)) {
+                    let item = document.createElement("div");
+                    item.className = "char-item";
+                    item.innerText = char;
+                    item.onclick = () => submitApplication(char);
+                    list.appendChild(item);
+                    count++;
+                }
             });
 
+            if (count === 0) {
+                list.innerHTML = "<p style='text-align:center;'>Все персонажи в этом классе заняты 😢</p>";
+            }
             showScreen('screen-character');
         }
 
-        // Финальная отправка
         function submitApplication(character) {
             userApp.character = character;
-            
-            // Если выбрали "Своя роль...", можно было бы открыть еще один экран с вводом текста,
-            // но пока просто отправляем. Для интеграции мы используем sendData.
-
-            let finalData = JSON.stringify({
-                action: "new_app",
-                username: userApp.username,
-                category: userApp.category,
-                role: userApp.character
-            });
-
-            // Отправляем данные обратно в бота!
+            let finalData = JSON.stringify({ action: "new_app", username: userApp.username, category: userApp.category, role: userApp.character });
             tg.sendData(finalData);
-            tg.close(); // Закрываем веб-апп
+            tg.close();
         }
     </script>
 </body>
