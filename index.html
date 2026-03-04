@@ -44,7 +44,17 @@
             align-items: center; justify-content: center; min-height: 100px; transition: transform 0.1s;
         }
         .category-card:active { transform: scale(0.95); }
-        .image-placeholder { width: 60px; height: 60px; background-color: rgba(255, 255, 255, 0.2); border-radius: 12px; margin-bottom: 10px; }
+        
+        /* Изменили стили для реальной картинки */
+        .category-img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 12px; 
+            margin-bottom: 10px;
+            object-fit: cover; /* Чтобы картинка не сплющивалась */
+            background-color: rgba(255, 255, 255, 0.2); /* Цвет фона, если картинка еще не загрузилась */
+        }
+
         .char-item { background-color: var(--secondary-bg); padding: 15px; border-radius: 16px; margin-bottom: 10px; cursor: pointer; text-align: center; font-weight: 500; }
         .char-item:active { background-color: var(--primary-color); color: var(--button-text); }
     </style>
@@ -61,7 +71,6 @@
         <div class="rules-box">
             <p><b>Обязательно к прочтению:</b></p>
             <ul>
-                <br><br><a href="https://t.me/pussuflood2">Канал Флуда</a></p>
                 <li>Калл могут вызывать только владельцы // пред</li>
                 <li>Менять роль слишком часто нельзя (раз в 2 недели)</li>
                 <li>Норму нужно соблюдать, если вы не наберете норму и не сможете оправдать себя, вылет</li>
@@ -71,15 +80,9 @@
                 <li>Нельзя скидывать фотки шокирующего содержания и +18 // бан</li>
                 <li>Спам (сообщением, фоткой, стикерам) ЗАПРЕЩЕН // бан или мут</li>
                 <li>Злоупотребление "@юз" (особенно в сторону админов или владельцев) // словесное предупреждение -> пред</li>
-                <li>Пиар других ролевых/флудов запрещен // пред (Если цель только реклама // бан)</li>
-                <li>Желательно быть подписанными на инфо тгк</li>
-                <li>Если вы зашли в флуд более 4 дней назад, нужно набрать норму</li>
-                <li>Если вы не набрали норму, у вас есть ровно 24 часа с момента окончания чистки для объяснения причины</li>
-                <li>Желательно предупреждать о ресте хотя бы за 1-2 дня перед чисткой</li>
-                <li>Если вы вышли из реста, то в течение 4 дней норму у вас проверять не будут</li>
-           </ul>
-            <p><b>Важное:</b> Всего максимум 4 варна, но на третий варн прибавляется сразу два к счетчику. Жалобы подаются через бота с пометкой "Жалоба" (максимум через 47 часов после нарушения).</p>
-            <p>Когда выходите, желательно говорите роль и причину!<br><br><a href="https://telegra.ph/Pravila-polnaya-versiya-300126-01-29" target="_blank">Полные правила тут</a></p>
+                <li>Пиар других ролевых/флудов запрещен // пред (Если цель реклама // бан)</li>
+            </ul>
+            <p><a href="https://telegra.ph/Pravila-polnaya-versiya-300126-01-29" target="_blank" style="color: var(--primary-color);">Полные правила тут</a></p>
         </div>
         <button onclick="showScreen('screen-username')">Я прочитал и согласен</button>
     </div>
@@ -107,7 +110,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Читаем занятые роли из умной ссылки, которую прислал бот
         const urlParams = new URLSearchParams(window.location.search);
         const takenParam = urlParams.get('taken');
         let takenRoles = [];
@@ -116,6 +118,21 @@
         }
 
         let userApp = { username: "", category: "", character: "" };
+
+        // 👇 ЗДЕСЬ ВСТАВЛЯЙ ССЫЛКИ НА КАРТИНКИ 👇
+        const categoryImages = {
+            "WITCH": "https://utkichev.github.io/role-app/witch.jpg",      // Замени на свое название файла
+            "BEAST": "https://utkichev.github.io/role-app/beast.jpg",
+            "ANCIENT": "https://utkichev.github.io/role-app/ancient.jpg",
+            "SPECIAL": "https://utkichev.github.io/role-app/special.jpg",
+            "DRAGON": "https://utkichev.github.io/role-app/dragon.jpg",
+            "LEGENDARY": "https://utkichev.github.io/role-app/legendary.jpg",
+            "SUPER EPIC": "https://utkichev.github.io/role-app/superepic.jpg",
+            "EPIC": "https://utkichev.github.io/role-app/epic.jpg",
+            "RARE": "https://utkichev.github.io/role-app/rare.jpg",
+            "COMMON": "https://utkichev.github.io/role-app/common.jpg",
+            "ДРУГОЕ": "https://i.imgur.com/rM13K8o.png" // Это просто заглушка-вопросик
+        };
 
         const rolesData = {
             "WITCH": ["Dark Enchantress Cookie"],
@@ -155,7 +172,15 @@
                 let card = document.createElement("div");
                 card.className = "category-card";
                 card.onclick = () => selectCategory(cat);
-                card.innerHTML = `<div class="image-placeholder"></div><div>${cat}</div>`;
+                
+                // Подставляем картинку из списка categoryImages
+                // Если картинки нет или ссылка не работает, покажется прозрачный квадрат
+                let imgUrl = categoryImages[cat] || "";
+                
+                card.innerHTML = `
+                    <img src="${imgUrl}" class="category-img" alt="" onerror="this.style.display='none'">
+                    <div>${cat}</div>
+                `;
                 grid.appendChild(card);
             }
         }
@@ -168,7 +193,6 @@
 
             let count = 0;
             rolesData[cat].forEach(char => {
-                // Если персонаж уже занят - не показываем его!
                 if (!takenRoles.includes(char)) {
                     let item = document.createElement("div");
                     item.className = "char-item";
