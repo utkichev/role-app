@@ -45,14 +45,11 @@
         }
         .category-card:active { transform: scale(0.95); }
         
-        /* Изменили стили для реальной картинки */
         .category-img {
-            width: 60px; 
-            height: 60px; 
-            border-radius: 12px; 
-            margin-bottom: 10px;
-            object-fit: cover; /* Чтобы картинка не сплющивалась */
-            background-color: rgba(255, 255, 255, 0.2); /* Цвет фона, если картинка еще не загрузилась */
+            width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; object-fit: cover;
+        }
+        .image-placeholder {
+            width: 60px; height: 60px; background-color: rgba(255, 255, 255, 0.2); border-radius: 12px; margin-bottom: 10px;
         }
 
         .char-item { background-color: var(--secondary-bg); padding: 15px; border-radius: 16px; margin-bottom: 10px; cursor: pointer; text-align: center; font-weight: 500; }
@@ -97,13 +94,21 @@
     <div id="screen-category" class="screen">
         <h2>Выберите класс</h2>
         <div class="grid-container" id="category-grid"></div>
-        <button onclick="showScreen('screen-username')" style="margin-top: 20px; background-color: #ccc; color: #333;">Назад</button>
+        <button onclick="tg.close()" style="margin-top: 20px; background-color: #ccc; color: #333;">Закрыть</button>
     </div>
 
     <div id="screen-character" class="screen">
         <h2 id="selected-category-title">Персонажи</h2>
         <div id="character-list"></div>
         <button onclick="showScreen('screen-category')" style="margin-top: 20px; background-color: #ccc; color: #333;">Назад к классам</button>
+    </div>
+
+    <div id="screen-custom-role" class="screen">
+        <h2>Своя роль</h2>
+        <p style="text-align: center;">Введите название роли или персонажа:</p>
+        <input type="text" id="custom-role-input" placeholder="Например: Неигровой персонаж" />
+        <button onclick="submitCustomRole()">Отправить заявку</button>
+        <button onclick="showScreen('screen-category')" style="margin-top: 10px; background-color: #ccc; color: #333;">Назад к классам</button>
     </div>
 
     <script>
@@ -119,9 +124,8 @@
 
         let userApp = { username: "", category: "", character: "" };
 
-        // 👇 ЗДЕСЬ ВСТАВЛЯЙ ССЫЛКИ НА КАРТИНКИ 👇
         const categoryImages = {
-            "WITCH": "https://utkichev.github.io/role-app/witch.jpg",      // Замени на свое название файла
+            "WITCH": "https://utkichev.github.io/role-app/witch.jpg",
             "BEAST": "https://utkichev.github.io/role-app/beast.jpg",
             "ANCIENT": "https://utkichev.github.io/role-app/ancient.jpg",
             "SPECIAL": "https://utkichev.github.io/role-app/special.jpg",
@@ -131,7 +135,7 @@
             "EPIC": "https://utkichev.github.io/role-app/epic.jpg",
             "RARE": "https://utkichev.github.io/role-app/rare.jpg",
             "COMMON": "https://utkichev.github.io/role-app/common.jpg",
-            "ДРУГОЕ": "https://i.imgur.com/rM13K8o.png" // Это просто заглушка-вопросик
+            "ДРУГОЕ": "https://i.imgur.com/rM13K8o.png" 
         };
 
         const rolesData = {
@@ -140,12 +144,12 @@
             "ANCIENT": ["White Lily Cookie", "Golden Cheese Cookie", "Dark Cacao Cookie", "Hollyberry Cookie", "Pure Vanilla Cookie"],
             "SPECIAL": ["Snapdragon Cookie", "Cream Ferret Cookie", "Icicle Yeti Cookie", "Marshmallow Bunny Cookie"],
             "DRAGON": ["Pitaya Dragon Cookie"],
-            "LEGENDARY": ["Wind Archer Cookie", "Millennial Tree Cookie", "Stormbringer Cookie", "Moonlight Cookie", "Black Pearl Cookie", "Fire Spirit Cookie", "Sea Fairy Cookie", "Frost Queen Cookie"],
+            "LEGENDARY": ["Wind Archer Cookie", "Millennial Tree Cookie", "Stormbringer Cookie", "Moonlight Cookie", "Black Pearl Cookie", "Fire Spirit Cookie", "Sea Fairy Cookie", "Frost Queen Cookie", "Sugar Swan Cookie"],
             "SUPER EPIC": ["Doughhael Cookie", "Camellia Cookie", "Elder Faerie Cookie", "Crimson Coral Cookie", "Shining Glitter Cookie", "Capsaicin Cookie", "Clotted Cream Cookie", "Oyster Cookie", "Sherbet Cookie", "Stardust Cookie", "Venom Dough Cookie"],
             "EPIC": ["Nutmeg Tiger Cookie", "Smoked Cheese Cookie", "Golden Osmanthus Cookie", "Choco Drizzle Cookie", "Pudding à la Mode Cookie", "Green Tea Mousse Cookie", "Okchun Cookie", "Candy Apple Cookie", "Black Sapphire Cookie", "Red Osmanthus Cookie", "Street Urchin Cookie", "Cloud Haetae Cookie", "Peach Blossom Cookie", "Star Coral Cookie", "Caramel Choux Cookie", "Burnt Cheese Cookie", "Fettuccine Cookie", "Mozzarella Cookie", "Olive Cookie", "Linzer Cookie", "Crème Brûlée Cookie", "Rebel Cookie", "Silverbell Cookie", "Mercurial Knight Cookie", "Matcha Cookie", "Butter Roll Cookie", "Prophet Cookie", "Milky Way Cookie", "Blueberry Pie Cookie", "Space Doughnut", "Prune Juice Cookie", "Kouign-Amann Cookie", "Royal Margarine Cookie", "Tarte Tatin Cookie", "Rockstar Cookie", "Black Lemonade Cookie", "Peppermint Cookie", "Frilled Jellyfish Cookie", "Cocoa Cookie", "Eclair Cookie", "Tea Knight Cookie", "Affogato Cookie", "Caramel Arrow Cookie", "Cherry Blossom Cookie", "Wildberry Cookie", "Crunchy Chip Cookie", "Financier Cookie", "Cream Unicorn Cookie", "Captain Caviar Cookie", "Candy Diver Cookie", "Schwarzwälder", "Macaron Cookie", "Carol Cookie", "Pinecone Cookie", "Black Raisin Cookie", "Strawberry Crepe Cookie", "Fig Cookie", "Pastry Cookie", "Red Velvet Cookie", "Mango Cookie", "Lilac Cookie", "Parfait Cookie", "Raspberry Cookie", "Moon Rabbit Cookie", "Mala Sauce Cookie", "Twizzly Gummy Cookie", "Pumpkin Pie Cookie", "Cotton Cookie", "Licorice Cookie", "Madeleine Cookie", "Espresso Cookie", "Rye Cookie", "Kumiho Cookie", "Latte Cookie", "Cream Puff Cookie", "Almond Cookie", "Werewolf Cookie", "Mint Choco Cookie", "Herb Cookie", "Dark Choco Cookie", "Sparkling Cookie", "Chili Pepper Cookie", "Pomegranate Cookie", "Purple Yam Cookie", "Milk Cookie", "Poison Mushroom Cookie", "Snow Sugar Cookie", "Vampire Cookie", "Tiger Lily Cookie", "Sorbet Shark Cookie", "Black Forest Cookie", "Squid Ink Cookie", "Agar Agar Cookie", "Wedding Cake Cookie", "Pavlova Cookie", "Sugarfly Cookie", "Cream Soda Cookie", "Lemon Cookie", "Orange Cookie", "Jagae Cookie", "Manju Cookie", "Lime Cookie", "Grapefruit Cookie", "Seltzer Cookie", "Menthol Cookie", "Charcoal Cookie", "Salt Cellar Cookie", "Chess Choco Cookie", "Mold Dough Cookie", "Pom Pom Dough"],
             "RARE": ["Princess Cookie", "Knight Cookie", "Cherry Cookie", "Alchemist Cookie", "Adventurer Cookie", "Blackberry Cookie", "Gumball Cookie", "Onion Cookie", "Pancake Cookie", "Avocado Cookie", "Carrot Cookie", "Clover Cookie", "Custard Cookie III", "Devil Cookie"],
             "COMMON": ["Beet Cookie", "Wizard Cookie", "Muscle Cookie", "Angel Cookie", "Ninja Cookie", "Strawberry Cookie", "GingerBrave"],
-            "ДРУГОЕ": ["Своя роль..."]
+            "ДРУГОЕ": [] // Оставили пустым, логика обрабатывается отдельно
         };
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
@@ -168,25 +172,35 @@
         function buildCategories() {
             const grid = document.getElementById("category-grid");
             grid.innerHTML = ""; 
+            
             for (let cat in rolesData) {
                 let card = document.createElement("div");
                 card.className = "category-card";
+                
+                // РАСТЯГИВАЕМ "ДРУГОЕ" НА ВСЮ ШИРИНУ
+                if (cat === "ДРУГОЕ") {
+                    card.style.gridColumn = "1 / -1";
+                }
+                
                 card.onclick = () => selectCategory(cat);
                 
-                // Подставляем картинку из списка categoryImages
-                // Если картинки нет или ссылка не работает, покажется прозрачный квадрат
                 let imgUrl = categoryImages[cat] || "";
+                let imgHtml = imgUrl ? `<img src="${imgUrl}" class="category-img" alt="">` : `<div class="image-placeholder"></div>`;
                 
-                card.innerHTML = `
-                    <img src="${imgUrl}" class="category-img" alt="" onerror="this.style.display='none'">
-                    <div>${cat}</div>
-                `;
+                card.innerHTML = `${imgHtml}<div>${cat}</div>`;
                 grid.appendChild(card);
             }
         }
 
         function selectCategory(cat) {
             userApp.category = cat;
+            
+            // ЕСЛИ ВЫБРАЛИ "ДРУГОЕ" - ОТКРЫВАЕМ НОВОЕ ОКНО ВВОДА
+            if (cat === "ДРУГОЕ") {
+                showScreen('screen-custom-role');
+                return;
+            }
+
             document.getElementById("selected-category-title").innerText = cat;
             const list = document.getElementById("character-list");
             list.innerHTML = "";
@@ -209,11 +223,21 @@
             showScreen('screen-character');
         }
 
+        // ОТПРАВКА СВОЕЙ РОЛИ
+        function submitCustomRole() {
+            let customRole = document.getElementById("custom-role-input").value.trim();
+            if (!customRole) {
+                alert("Пожалуйста, введите название роли!");
+                return;
+            }
+            submitApplication(customRole);
+        }
+
         function submitApplication(character) {
             userApp.character = character;
             let finalData = JSON.stringify({ action: "new_app", username: userApp.username, category: userApp.category, role: userApp.character });
             tg.sendData(finalData);
-            tg.close();
+            // Закрывать вручную не обязательно, sendData сам закрывает приложение (но на всякий случай)
         }
     </script>
 </body>
